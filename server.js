@@ -4,6 +4,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/mongoose.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
+import { fileURLToPath } from "url";
 
 connectDB();
 
@@ -13,9 +14,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, "content-length"),
+      "-",
+      tokens["response-time"](req, res),
+      "ms",
+    ].join(" ");
+  })
+);
 
 if (process.env.NODE_ENV === "production") {
-  const __dirname = path.resolve();
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
   app.use(express.static(path.join(__dirname, "/client/dist")));
   app.get("*", (req, res) =>
     res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"))
