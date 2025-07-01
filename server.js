@@ -4,7 +4,9 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/mongoose.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
+import morgan from "morgan";
 import { fileURLToPath } from "url";
+import rootRouter from "./routes/index.js"
 
 connectDB();
 
@@ -27,6 +29,8 @@ app.use(
     ].join(" ");
   })
 );
+
+app.use("/api/v1", rootRouter);
 
 if (process.env.NODE_ENV === "production") {
   const __filename = fileURLToPath(import.meta.url);

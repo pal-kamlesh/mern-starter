@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken";
 import { errorHandler } from "../utils/error.js";
 
-function createToken(employee) {
+function createToken(user) {
   let date = new Date().toISOString().split("T")[0];
   const token = jwt.sign(
     {
-      id: employee._id,
-      role: employee.role,
+      id: user._id,
+      role: user.role,
     },
     process.env.JWT_SECRET
   );
@@ -35,17 +35,5 @@ const ifAdmin = (req, res, next) => {
   }
   next();
 };
-const ifOprator = (req, res, next) => {
-  if (req.user.role !== "oprator") {
-    return next(errorHandler(403, "Not Oprator"));
-  }
-  next();
-};
-const ifHr = (req, res, next) => {
-  if (req.user.role !== "hr") {
-    return next(errorHandler(403, "Not Hr"));
-  }
-  next();
-};
 
-export { verifyToken, ifAdmin, ifOprator, ifHr, createToken };
+export { verifyToken, ifAdmin, createToken };
